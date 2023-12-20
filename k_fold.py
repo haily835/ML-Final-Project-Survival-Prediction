@@ -2,9 +2,8 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold
 from imblearn.over_sampling import SMOTE
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, f1_score
 
 def k_fold(X, y, classifier, k_folds=10, verbose=True):
     skf = StratifiedKFold(n_splits=k_folds, shuffle=True, random_state=42)
@@ -12,6 +11,8 @@ def k_fold(X, y, classifier, k_folds=10, verbose=True):
 
     weighted_accuracies = []
     f1_scores = []
+    precision_scores = []
+    recall_scores = []
 
     i = 0
     for train_index, test_index in skf.split(X, y):
@@ -34,16 +35,30 @@ def k_fold(X, y, classifier, k_folds=10, verbose=True):
         # Calculate and store the F1 score
         f1 = f1_score(y_test, y_pred, average='weighted')
         f1_scores.append(f1)
+
+        # Calculate and store the precision score
+        precision = precision_score(y_test, y_pred, average='weighted', zero_division=0)
+        precision_scores.append(precision)
+
+        # Calculate and store the recall score
+        recall = recall_score(y_test, y_pred, average='weighted', zero_division=0)
+        recall_scores.append(recall)
+
         if verbose:
-            print(f"Fold {i+1} - Weighted Accuracy: {weighted_accuracy} - F1 Score: {f1}")
-        
+            print(f"Fold {i+1} - Weighted Accuracy: {weighted_accuracy} - F1 Score: {f1} - Precision: {precision} - Recall: {recall}")
+
         i += 1
 
-    # Calculate the average weighted accuracy and F1 score
+    # Calculate the average metrics
     average_weighted_accuracy = np.mean(weighted_accuracies)
     average_f1_score = np.mean(f1_scores)
+    average_precision = np.mean(precision_scores)
+    average_recall = np.mean(recall_scores)
 
     print(f"Classifier: {classifier.__class__.__name__}")
     print(f"Avg Weighted Accuracy: {average_weighted_accuracy}")
-    print(f"Avg F1 Score: {average_f1_score}\n")
-    return average_weighted_accuracy, average_f1_score
+    print(f"Avg F1 Score: {average_f1_score}")
+    print(f"Avg Precision: {average_precision}")
+    print(f"Avg Recall: {average_recall}\n")
+    
+    return average_weighted_accuracy, average_f1_score, average_precision, average_recall
