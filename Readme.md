@@ -20,8 +20,7 @@ filtering_feature.ipynb:
 Wrapper methods: forward_elemination.ipynb - Currently 15 genes can achieve 85% accuracy.
 - From the top genes selected, perform elemination with the aim to achieve smaller set of features and not lowering the accuracy.
 
-Genetic algorithm: Currently around 270/500 genes selected (top 500 by MRMR). 86% accuracy
-- TODO:
+Genetic algorithm: Select feature from top 500 by RandomForest with 5 classifier for evaluation.
 
 
 k_folds.py:
